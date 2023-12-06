@@ -8,7 +8,8 @@
 
 class CubeConundrum {
 public:
-    static unsigned int solution(const std::string & file_name);
+    static unsigned int solution01(const std::string & file_name);
+    static unsigned int solution02(const std::string & file_name);
 private:
     static unsigned int get_game_index(const std::string& string);
     static unsigned int get_number_of_bags(const std::string& string, const std::string& color);

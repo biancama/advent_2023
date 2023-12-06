@@ -6,12 +6,11 @@
 #include "../utils/ReadFile.h"
 #include <regex>
 #include <cstdio>
-#include <iostream>
 #include <boost/tokenizer.hpp>
 
 using namespace std;
 using namespace boost;
-unsigned int CubeConundrum::solution(const std::string& file_name) {
+unsigned int CubeConundrum::solution01(const std::string& file_name) {
     unsigned int res = 0;
     auto lines = ReadFile::read_input_file(file_name);
     char_separator<char> sep(";");
@@ -24,16 +23,29 @@ unsigned int CubeConundrum::solution(const std::string& file_name) {
                 break;
             }
         }
-            //
-        // check for red
         if (isOk) {
-            cout << "Line " << line << endl;
             res += get_game_index(line);
         }
     }
     return res;
 }
+unsigned int CubeConundrum::solution02(const string &file_name) {
+    unsigned int res = 0;
+    auto lines = ReadFile::read_input_file(file_name);
+    char_separator<char> sep(";");
+    for(const auto& line: lines) {
+        unsigned int max_red = 0, max_green = 0, max_blue = 0;
+        tokenizer<char_separator<char> > tok(line, sep);
 
+        for (auto beg = tok.begin(); beg != tok.end(); ++beg) {
+            max_red = max(max_red, get_number_of_bags(*beg, "red"));
+            max_green = max(max_green, get_number_of_bags(*beg, "green"));
+            max_blue = max(max_blue, get_number_of_bags(*beg, "blue"));
+        }
+        res += max_red * max_green * max_blue;
+    }
+    return res;
+}
 unsigned int CubeConundrum::get_game_index(const std::string &in) {
     std::regex e ("^Game (\\d*).*$");
     std::smatch sm;
@@ -48,13 +60,10 @@ unsigned int CubeConundrum::get_number_of_bags(const string &in, const string& c
     vector<char> buf(sz + 1);
     sprintf(buf.data(), fmt, color.c_str());
     string regex_str(buf.begin(), buf.end() - 1);
-    //string s ("Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green");
     regex rgx {regex_str};
-    //regex e_t ("(.*)");
 
     smatch matches;
     string str(in);
-    //auto t = regex_match (s, sm, e_t);
     while (std::regex_search(str, matches, rgx)) {
         string single_match = matches.str(1);
         str = matches.suffix();
@@ -66,3 +75,5 @@ unsigned int CubeConundrum::get_number_of_bags(const string &in, const string& c
 
     return result;
 }
+
+
